@@ -40,7 +40,10 @@ O diagrama ER (classes) tem três grupos de entidades, identificados por cor:
 | Pessoa e Usuário são **a mesma entidade** (`Usuario`): o colaborador é o próprio usuário e se cadastra sozinho (`cadastrar()`).                                                             | [Autor]        |
 | **Organizador não é um tipo de usuário**, é um papel em relação a um evento: `Evento.organizador_id` (FK → `Usuario`). A mesma pessoa pode organizar um evento e participar de outro. | [IA → adotada] |
 | O papel se chama **organizador** (e não "administrador"), por ser o termo natural para quem monta um evento de comida, de uma confraternização a uma ceia em família. | [Autor] |
+| O **CPF** é validado pelos **dígitos verificadores (Módulo 11)** e rejeita sequências com todos os dígitos iguais (ex.: `111.111.111-11`), que passam no cálculo mas não são emitidas pela Receita Federal. Aceita com ou sem máscara e é **armazenado só com os 11 dígitos**. | [Autor] |
 
+
+A unicidade de CPF e e-mail fica no banco. A validação matemática do CPF fica na aplicação (`CpfUtils` + anotação `@CpfValido` no DTO de cadastro), não na entidade JPA: o banco só garante o formato de 11 dígitos (`CHECK`) e a unicidade.
 
 ---
 
@@ -198,7 +201,30 @@ A tabela `RestricaoAlergeno` faz as restrições dos participantes e os alérgen
 
 Restrições de *origem* (não são alergias) entram no mesmo cruzamento: `Carne` **e** `Mel` **são incluídos no catálogo** `Alergeno`, **sem renomear a tabela**. Exemplos: Vegetariano → Carne, Peixe, Crustáceos; Vegano → Carne, Peixe, Crustáceos, Leite e derivados, Ovo, Mel. Premissa documentada: o catálogo `Alergeno` representa "alérgenos e componentes" que alguém pode precisar evitar.
 
-**[Pendente]** Lista final do seed de `Alergeno`, `RestricaoAlimentar` e do mapeamento `RestricaoAlergeno`. Proposta no plano: alergênicos da RDC 26/2015 da Anvisa + Carne e Mel.
+### Lista do seed **[IA → adotada]**
+
+Base: alergênicos de rotulagem obrigatória da **RDC 26/2015 (Anvisa)**, mais `Carne` e `Mel`.
+
+**`Alergeno`:** Glúten, Leite e derivados, Ovo, Amendoim, Castanhas e nozes, Soja, Peixe, Crustáceos, Gergelim, Carne, Mel.
+
+**`RestricaoAlimentar` → alérgenos:**
+
+| Restrição | Alérgenos que evita |
+| --- | --- |
+| Doença celíaca / sem glúten | Glúten |
+| Intolerância à lactose | Leite e derivados |
+| Alergia a leite | Leite e derivados |
+| Alergia a ovo | Ovo |
+| Alergia a amendoim | Amendoim |
+| Alergia a castanhas | Castanhas e nozes |
+| Alergia a soja | Soja |
+| Alergia a peixe | Peixe |
+| Alergia a crustáceos | Crustáceos |
+| Alergia a gergelim | Gergelim |
+| Vegetariano | Carne, Peixe, Crustáceos |
+| Vegano | Carne, Peixe, Crustáceos, Leite e derivados, Ovo, Mel |
+
+**`Categoria`:** Bebidas, Salgados, Doces e sobremesas, Pratos principais, Acompanhamentos, Carnes, Frutas, Pães e frios, Descartáveis e utensílios, Outros.
 
 ---
 

@@ -14,7 +14,7 @@ Este documento consolida as regras de negócio do sistema de eventos de alimenta
 | ID | Regra | Origem |
 |---|---|---|
 | RN-01 | O cadastro exige **nome, CPF, e-mail e senha**. As restrições alimentares são opcionais e escolhidas do catálogo. | Enunciado + Decisões |
-| RN-02 | O **CPF** precisa ter **11 dígitos** e **dígitos verificadores válidos**. Sequências repetidas (ex.: `111.111.111-11`) são inválidas. Ele é aceito com ou sem máscara e armazenado só com os dígitos. | Enunciado + Plano |
+| RN-02 | O **CPF** precisa ter **11 dígitos** e **dígitos verificadores válidos**. Sequências repetidas (ex.: `111.111.111-11`) são inválidas. Ele é aceito com ou sem máscara e armazenado só com os dígitos. | Enunciado + Decisões |
 | RN-03 | **CPF e e-mail são únicos** no sistema. | Decisões |
 | RN-04 | A senha é armazenada apenas como **hash**, nunca em texto puro. Tamanho mínimo: 8 caracteres. | Decisões (hash) + Plano (tamanho) |
 | RN-05 | Pessoa e usuário são a mesma entidade: o **colaborador se cadastra sozinho**. | Decisões |
