@@ -1,4 +1,4 @@
-import { Link, NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import { useAuth } from '../auth/AuthContext'
 
 export default function Layout() {
@@ -7,18 +7,24 @@ export default function Layout() {
   return (
     <div className="app">
       <header className="topbar">
-        <Link className="brand" to="/">
-          <span className="brand-mark" aria-hidden="true" />
-          <span>
-            <strong>Mesa</strong>
-            <small>eventos Sulwork</small>
-          </span>
-        </Link>
+        <div className="topbar-inicio">
+          <div className="brand">
+            <span className="brand-mark" aria-hidden="true" />
+            <span>
+              <strong>Mesa</strong>
+              <small>eventos Sulwork</small>
+            </span>
+          </div>
+          {usuario ? (
+            <NavLink to="/eventos">Eventos</NavLink>
+          ) : (
+            <NavLink to="/">Início</NavLink>
+          )}
+        </div>
         <nav className="nav">
           {usuario ? (
             <>
-              <NavLink to="/">Eventos</NavLink>
-              <NavLink to="/perfil">{usuario.nome.split(' ')[0]}</NavLink>
+              <NavLink to="/perfil">Perfil</NavLink>
               <button type="button" className="linkish" onClick={logout}>
                 Sair
               </button>

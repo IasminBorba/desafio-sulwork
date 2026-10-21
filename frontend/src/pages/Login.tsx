@@ -7,7 +7,7 @@ export default function Login() {
   const { usuario, carregando, login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const destino = (location.state as { from?: string } | null)?.from ?? '/'
+  const destino = (location.state as { from?: string } | null)?.from ?? '/eventos'
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
   const [erro, setErro] = useState<unknown>(null)

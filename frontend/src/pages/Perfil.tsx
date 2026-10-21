@@ -39,7 +39,7 @@ export default function Perfil() {
   }
 
   return (
-    <section className="card" style={{ maxWidth: 560 }}>
+    <section className="card form-card">
       <p className="eyebrow">Conta</p>
       <h1>Perfil</h1>
       <p>E-mail e CPF ficam fixos. Nome e restrições podem mudar.</p>

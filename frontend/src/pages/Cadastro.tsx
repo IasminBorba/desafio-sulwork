@@ -24,7 +24,7 @@ export default function Cadastro() {
   }, [])
 
   if (!carregando && usuario) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/eventos" replace />
   }
 
   async function enviar(evento: FormEvent) {
@@ -39,7 +39,7 @@ export default function Cadastro() {
         senha,
         restricaoIds,
       })
-      navigate('/', { replace: true })
+      navigate('/eventos', { replace: true })
     } catch (falha) {
       setErro(falha)
     } finally {

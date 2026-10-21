@@ -41,7 +41,7 @@ export default function EventoNovo() {
   }
 
   return (
-    <section className="card" style={{ maxWidth: 640 }}>
+    <section className="card form-card">
       <p className="eyebrow">Organizar</p>
       <h1>Novo evento</h1>
       <p>O evento nasce em rascunho. Publique depois de cadastrar pelo menos um item.</p>

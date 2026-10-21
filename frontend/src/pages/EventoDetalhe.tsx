@@ -78,7 +78,7 @@ export default function EventoDetalhe() {
     try {
       if (acao === 'excluir') {
         await excluirEvento(eventoId)
-        navigate('/')
+        navigate('/eventos')
         return
       }
       const mapa = {
