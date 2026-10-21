@@ -85,10 +85,21 @@ A migration `V3` cria três contas com a senha `senha123`:
 | Bia Lima | bia.lima@sulwork.demo | participa do churrasco (celíaca) |
 | Carlos Dias | carlos.dias@sulwork.demo | organiza um almoço já encerrado (vegano) |
 
+## Aplicação publicada
+
+| Peça | URL |
+|---|---|
+| Frontend | https://desafio-sulwork-omega.vercel.app |
+| API | https://desafio-sulwork.onrender.com/api/v1 |
+| Swagger | https://desafio-sulwork.onrender.com/docs |
+
+Contas de demonstração: `ana.souza@sulwork.demo`, `bia.lima@sulwork.demo` e `carlos.dias@sulwork.demo`, senha `senha123`.
+
+No plano gratuito o backend no Render dorme depois de alguns minutos sem acesso. A primeira chamada pode levar cerca de um minuto.
+
 ## Próximas seções
 
 Conforme o desenvolvimento avançar, este README vai incluir:
 - instruções de execução (com e sem Docker);
-- links da aplicação publicada e da documentação Swagger;
 - cálculo da cobertura com um exemplo numérico;
 - percentual de cobertura de testes medido pelo JaCoCo.
