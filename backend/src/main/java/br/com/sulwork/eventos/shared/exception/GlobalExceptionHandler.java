@@ -6,6 +6,8 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.core.PropertyReferenceException;
+import org.springframework.data.core.PropertyResolutionException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -52,6 +54,12 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(RegraNegocioException.class)
 	ProblemDetail handleRegraNegocio(RegraNegocioException ex) {
 		return problema(HttpStatus.UNPROCESSABLE_CONTENT, "Regra de negócio violada", ex.getMessage());
+	}
+
+	@ExceptionHandler({ PropertyReferenceException.class, PropertyResolutionException.class })
+	ProblemDetail handleOrdenacaoInvalida(RuntimeException ex) {
+		return problema(HttpStatus.BAD_REQUEST, "Dados inválidos",
+				"Parâmetro de ordenação inválido. Use um campo do evento, por exemplo dataInicio,desc.");
 	}
 
 	@ExceptionHandler(Exception.class)

@@ -24,6 +24,8 @@ import br.com.sulwork.eventos.evento.dto.EventoRequest;
 import br.com.sulwork.eventos.evento.dto.EventoResumoResponse;
 import br.com.sulwork.eventos.evento.dto.ReabrirRequest;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -40,9 +42,16 @@ public class EventoController {
 
 	@GetMapping
 	@Operation(summary = "Listar eventos do usuário")
+	@Parameters({
+			@Parameter(name = "page", description = "Página (começa em 0)", example = "0"),
+			@Parameter(name = "size", description = "Quantidade por página", example = "20"),
+			@Parameter(name = "sort", description = "Campo e direção, por exemplo dataInicio,desc",
+					example = "dataInicio,desc")
+	})
 	public Page<EventoResumoResponse> listar(
 			@RequestParam(required = false) StatusEvento status,
 			@RequestParam(required = false) PapelEvento papel,
+			@Parameter(hidden = true)
 			@PageableDefault(size = 20, sort = "dataInicio", direction = Sort.Direction.DESC) Pageable pageable) {
 		return eventoService.listar(status, papel, pageable);
 	}

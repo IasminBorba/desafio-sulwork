@@ -75,6 +75,17 @@ class EventoControllerIT extends IntegrationTestBase {
 	}
 
 	@Test
+	void ordenacaoInexistenteRetorna400() throws Exception {
+		String token = AutenticacaoTeste.cadastrarELogar(mockMvc, "Ana", "11144477735", "ana@example.com");
+
+		mockMvc.perform(get("/api/v1/eventos")
+						.param("sort", "[\"string\"]")
+						.header("Authorization", bearer(token)))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.detail").value(org.hamcrest.Matchers.containsString("ordenação")));
+	}
+
+	@Test
 	void rascunhoEInvisivelParaQuemNaoOrganiza() throws Exception {
 		String ana = AutenticacaoTeste.cadastrarELogar(mockMvc, "Ana", "11144477735", "ana@example.com");
 		String bia = AutenticacaoTeste.cadastrarELogar(mockMvc, "Bia", "52998224725", "bia@example.com");
