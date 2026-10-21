@@ -35,9 +35,8 @@ public interface EventoRepository extends JpaRepository<Evento, Long> {
 	@EntityGraph(attributePaths = "organizador")
 	@Query("""
 			select e from Evento e
-			 where (e.organizador.id = :usuarioId
-			     or exists (select 1 from Participacao p where p.evento = e and p.usuario.id = :usuarioId))
-			   and (e.status <> br.com.sulwork.eventos.evento.StatusEvento.RASCUNHO or e.organizador.id = :usuarioId)
+			 where (e.status <> br.com.sulwork.eventos.evento.StatusEvento.RASCUNHO
+			     or e.organizador.id = :usuarioId)
 			   and (:status is null or e.status = :status)
 			""")
 	Page<Evento> findVisiveisDoUsuario(@Param("usuarioId") Long usuarioId, @Param("status") StatusEvento status,

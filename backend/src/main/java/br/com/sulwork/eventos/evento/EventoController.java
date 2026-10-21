@@ -41,7 +41,7 @@ public class EventoController {
 	}
 
 	@GetMapping
-	@Operation(summary = "Listar eventos do usuário")
+	@Operation(summary = "Listar eventos visíveis")
 	@Parameters({
 			@Parameter(name = "page", description = "Página (começa em 0)", example = "0"),
 			@Parameter(name = "size", description = "Quantidade por página", example = "20"),

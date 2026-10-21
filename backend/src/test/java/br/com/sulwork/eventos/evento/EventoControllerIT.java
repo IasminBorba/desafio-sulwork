@@ -104,6 +104,26 @@ class EventoControllerIT extends IntegrationTestBase {
 	}
 
 	@Test
+	void eventoAbertoApareceParaColaboradorQueAindaNaoParticipa() throws Exception {
+		String ana = AutenticacaoTeste.cadastrarELogar(mockMvc, "Ana", "11144477735", "ana@example.com");
+		String bia = AutenticacaoTeste.cadastrarELogar(mockMvc, "Bia", "52998224725", "bia@example.com");
+		long id = criarEvento(ana, "Churrasco da equipe");
+		adicionarItem(id);
+		mockMvc.perform(post("/api/v1/eventos/" + id + "/publicar").header("Authorization", bearer(ana)))
+				.andExpect(status().isOk());
+
+		mockMvc.perform(get("/api/v1/eventos").header("Authorization", bearer(bia)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.content.length()").value(1))
+				.andExpect(jsonPath("$.content[0].id").value(id))
+				.andExpect(jsonPath("$.content[0].status").value("ABERTO"))
+				.andExpect(jsonPath("$.content[0].souOrganizador").value(false));
+		mockMvc.perform(get("/api/v1/eventos/" + id).header("Authorization", bearer(bia)))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.id").value(id));
+	}
+
+	@Test
 	void publicarSemItemRetorna422EComItemAbreOEvento() throws Exception {
 		String token = AutenticacaoTeste.cadastrarELogar(mockMvc, "Ana", "11144477735", "ana@example.com");
 		long id = criarEvento(token, "Churrasco");
