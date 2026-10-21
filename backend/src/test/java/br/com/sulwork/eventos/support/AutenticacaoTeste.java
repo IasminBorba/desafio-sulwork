@@ -3,6 +3,8 @@ package br.com.sulwork.eventos.support;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -13,6 +15,11 @@ public final class AutenticacaoTeste {
 	}
 
 	public static String cadastrarELogar(MockMvc mockMvc, String nome, String cpf, String email) throws Exception {
+		return cadastrarELogar(mockMvc, nome, cpf, email, List.of());
+	}
+
+	public static String cadastrarELogar(MockMvc mockMvc, String nome, String cpf, String email,
+			List<Long> restricaoIds) throws Exception {
 		mockMvc.perform(post("/api/v1/auth/cadastro")
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("""
@@ -20,9 +27,10 @@ public final class AutenticacaoTeste {
 								  "nome": "%s",
 								  "cpf": "%s",
 								  "email": "%s",
-								  "senha": "senha123"
+								  "senha": "senha123",
+								  "restricaoIds": %s
 								}
-								""".formatted(nome, cpf, email)))
+								""".formatted(nome, cpf, email, restricaoIds)))
 				.andExpect(status().isCreated());
 		MvcResult login = mockMvc.perform(post("/api/v1/auth/login")
 						.contentType(MediaType.APPLICATION_JSON)
