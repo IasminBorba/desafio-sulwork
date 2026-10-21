@@ -1,5 +1,6 @@
 package br.com.sulwork.eventos.shared.exception;
 
+import static org.hamcrest.Matchers.containsString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -69,6 +71,22 @@ class GlobalExceptionHandlerTest {
 	}
 
 	@Test
+	void ordenacaoInvalidaDoSpringDataRetorna400() throws Exception {
+		mockMvc.perform(get("/teste/ordenacao"))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.status").value(400))
+				.andExpect(jsonPath("$.title").value("Dados inválidos"))
+				.andExpect(jsonPath("$.detail").value(containsString("ordenação")));
+	}
+
+	@Test
+	void acessoInvalidoNaoRelacionadoAOrdenacaoRetorna500() throws Exception {
+		mockMvc.perform(get("/teste/acesso-invalido"))
+				.andExpect(status().isInternalServerError())
+				.andExpect(jsonPath("$.detail").value("Ocorreu um erro inesperado."));
+	}
+
+	@Test
 	void validacaoRetorna400ComErrosPorCampo() throws Exception {
 		mockMvc.perform(post("/teste/validacao")
 						.contentType(MediaType.APPLICATION_JSON)
@@ -108,6 +126,17 @@ class GlobalExceptionHandlerTest {
 		@GetMapping("/teste/inesperado")
 		void inesperado() {
 			throw new IllegalStateException("detalhe interno");
+		}
+
+		@GetMapping("/teste/ordenacao")
+		void ordenacao() {
+			throw new InvalidDataAccessApiUsageException(
+					"Sort expression '[\"string\"]: ASC' must only contain property references or aliases used in the select clause");
+		}
+
+		@GetMapping("/teste/acesso-invalido")
+		void acessoInvalido() {
+			throw new InvalidDataAccessApiUsageException("Query specified join fetching");
 		}
 
 		@PostMapping("/teste/validacao")

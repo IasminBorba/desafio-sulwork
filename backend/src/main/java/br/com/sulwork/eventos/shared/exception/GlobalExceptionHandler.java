@@ -1,11 +1,13 @@
 package br.com.sulwork.eventos.shared.exception;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.springframework.data.core.PropertyReferenceException;
 import org.springframework.data.core.PropertyResolutionException;
 import org.springframework.http.HttpHeaders;
@@ -62,6 +64,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 				"Parâmetro de ordenação inválido. Use um campo do evento, por exemplo dataInicio,desc.");
 	}
 
+	@ExceptionHandler(InvalidDataAccessApiUsageException.class)
+	ProblemDetail handleAcessoInvalido(InvalidDataAccessApiUsageException ex) {
+		if (eOrdenacaoInvalida(ex)) {
+			return handleOrdenacaoInvalida(ex);
+		}
+		log.error("Erro inesperado", ex);
+		return problema(HttpStatus.INTERNAL_SERVER_ERROR, "Erro interno", "Ocorreu um erro inesperado.");
+	}
+
 	@ExceptionHandler(Exception.class)
 	ProblemDetail handleInesperado(Exception ex) {
 		log.error("Erro inesperado", ex);
@@ -83,6 +94,17 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 	private static Map<String, String> erroDeCampo(FieldError erro) {
 		String mensagem = erro.getDefaultMessage() == null ? "inválido" : erro.getDefaultMessage();
 		return Map.of("campo", erro.getField(), "mensagem", mensagem);
+	}
+
+	private static boolean eOrdenacaoInvalida(Throwable ex) {
+		while (ex != null) {
+			String mensagem = ex.getMessage();
+			if (mensagem != null && mensagem.toLowerCase(Locale.ROOT).contains("sort")) {
+				return true;
+			}
+			ex = ex.getCause();
+		}
+		return false;
 	}
 
 	private static ProblemDetail problema(HttpStatus status, String titulo, String detalhe) {
