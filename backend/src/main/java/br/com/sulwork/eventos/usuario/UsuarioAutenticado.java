@@ -21,6 +21,11 @@ public class UsuarioAutenticado {
 		return Long.valueOf(jwt().getSubject());
 	}
 
+	public Usuario get() {
+		return usuarioRepository.findById(id())
+				.orElseThrow(() -> RecursoNaoEncontradoException.de("Usuário", id()));
+	}
+
 	public Usuario comRestricoes() {
 		return usuarioRepository.findComRestricoesById(id())
 				.orElseThrow(() -> RecursoNaoEncontradoException.de("Usuário", id()));

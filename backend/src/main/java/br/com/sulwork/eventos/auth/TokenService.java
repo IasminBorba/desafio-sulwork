@@ -10,6 +10,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
 
+import br.com.sulwork.eventos.config.JwtConfig;
 import br.com.sulwork.eventos.config.JwtProperties;
 import br.com.sulwork.eventos.usuario.Usuario;
 
@@ -30,7 +31,7 @@ public class TokenService {
 		Instant agora = clock.instant();
 		Instant expiraEm = agora.plus(properties.expiration());
 		JwtClaimsSet claims = JwtClaimsSet.builder()
-				.issuer("sulwork-eventos")
+				.issuer(JwtConfig.EMISSOR)
 				.issuedAt(agora)
 				.expiresAt(expiraEm)
 				.subject(usuario.getId().toString())

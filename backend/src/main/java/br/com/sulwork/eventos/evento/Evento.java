@@ -68,10 +68,35 @@ public class Evento extends EntidadeAuditavel {
 		evento.tipo = tipo;
 		evento.dataInicio = dataInicio;
 		evento.dataFim = dataFim;
+		validarDatas(prazoAlteracao, dataInicio, dataFim);
 		evento.prazoAlteracao = prazoAlteracao;
 		evento.status = StatusEvento.RASCUNHO;
 		evento.organizador = organizador;
 		return evento;
+	}
+
+	public void atualizar(String nome, String descricao, TipoEvento tipo, Instant dataInicio, Instant dataFim,
+			Instant prazoAlteracao) {
+		if (status != StatusEvento.RASCUNHO && status != StatusEvento.ABERTO) {
+			throw new ConflitoException("Os dados do evento só podem ser editados em rascunho ou aberto.");
+		}
+		validarDatas(prazoAlteracao, dataInicio, dataFim);
+		this.nome = nome;
+		this.descricao = descricao;
+		this.tipo = tipo;
+		this.dataInicio = dataInicio;
+		this.dataFim = dataFim;
+		this.prazoAlteracao = prazoAlteracao;
+	}
+
+	public void garantirExclusao() {
+		if (status != StatusEvento.RASCUNHO) {
+			throw new ConflitoException("Só é possível excluir um evento em rascunho.");
+		}
+	}
+
+	public boolean ehOrganizadoPor(Long usuarioId) {
+		return organizador.getId().equals(usuarioId);
 	}
 
 	public void publicar(Clock clock, boolean possuiPeloMenosUmItem) {
