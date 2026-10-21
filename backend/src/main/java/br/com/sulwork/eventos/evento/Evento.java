@@ -1,8 +1,11 @@
 package br.com.sulwork.eventos.evento;
 
+import java.time.Clock;
 import java.time.Instant;
 
 import br.com.sulwork.eventos.shared.domain.EntidadeAuditavel;
+import br.com.sulwork.eventos.shared.exception.ConflitoException;
+import br.com.sulwork.eventos.shared.exception.RegraNegocioException;
 import br.com.sulwork.eventos.usuario.Usuario;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,6 +51,7 @@ public class Evento extends EntidadeAuditavel {
 
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false, length = 20)
+	@Setter(AccessLevel.NONE)
 	@ToString.Include
 	private StatusEvento status = StatusEvento.RASCUNHO;
 
@@ -68,6 +72,99 @@ public class Evento extends EntidadeAuditavel {
 		evento.status = StatusEvento.RASCUNHO;
 		evento.organizador = organizador;
 		return evento;
+	}
+
+	public void publicar(Clock clock, boolean possuiPeloMenosUmItem) {
+		if (status != StatusEvento.RASCUNHO) {
+			throw new ConflitoException("Só é possível publicar um evento em rascunho.");
+		}
+		if (!possuiPeloMenosUmItem) {
+			throw new RegraNegocioException("Publique o evento somente depois de cadastrar pelo menos um item.");
+		}
+		if (!prazoAlteracao.isAfter(clock.instant())) {
+			throw new RegraNegocioException("O prazo para alterações precisa estar no futuro.");
+		}
+		transitarPara(StatusEvento.ABERTO);
+	}
+
+	public void encerrar() {
+		transitarPara(StatusEvento.ENCERRADO);
+	}
+
+	public void reabrir(Clock clock, Instant novoPrazo, Instant novaDataInicio, Instant novaDataFim) {
+		if (status != StatusEvento.ENCERRADO) {
+			throw new ConflitoException("Só é possível reabrir um evento encerrado.");
+		}
+		Instant agora = clock.instant();
+		if (novoPrazo == null) {
+			throw new RegraNegocioException("Informe o novo prazo para alterações.");
+		}
+		if (novoPrazo.isBefore(agora)) {
+			throw new RegraNegocioException("O novo prazo para alterações não pode ser anterior ao momento atual.");
+		}
+
+		boolean dataInicioJaPassou = dataInicio.isBefore(agora);
+		Instant dataInicioFinal = dataInicio;
+		Instant dataFimFinal = dataFim;
+
+		if (dataInicioJaPassou) {
+			if (novaDataInicio == null || novaDataFim == null) {
+				throw new RegraNegocioException("o evento já passou da data de início; informe novas datas");
+			}
+			dataInicioFinal = novaDataInicio;
+			dataFimFinal = novaDataFim;
+		} else if (novaDataInicio != null || novaDataFim != null) {
+			if (novaDataInicio == null || novaDataFim == null) {
+				throw new RegraNegocioException("Informe a nova data de início e a nova data de fim.");
+			}
+			dataInicioFinal = novaDataInicio;
+			dataFimFinal = novaDataFim;
+		}
+
+		if (dataInicioFinal.isBefore(agora)) {
+			throw new RegraNegocioException("A data de início não pode ser anterior ao momento atual.");
+		}
+		validarDatas(novoPrazo, dataInicioFinal, dataFimFinal);
+
+		this.prazoAlteracao = novoPrazo;
+		this.dataInicio = dataInicioFinal;
+		this.dataFim = dataFimFinal;
+		transitarPara(StatusEvento.ABERTO);
+	}
+
+	public void concluir(Clock clock) {
+		if (!status.podeIrPara(StatusEvento.REALIZADO)) {
+			throw new ConflitoException("Só é possível concluir um evento encerrado.");
+		}
+		if (clock.instant().isBefore(dataInicio)) {
+			throw new RegraNegocioException("Só é possível concluir o evento depois da data de início.");
+		}
+		transitarPara(StatusEvento.REALIZADO);
+	}
+
+	public void cancelar() {
+		transitarPara(StatusEvento.CANCELADO);
+	}
+
+	public boolean aceitaAlteracoes(Clock clock) {
+		return status == StatusEvento.ABERTO && !clock.instant().isAfter(prazoAlteracao);
+	}
+
+	private void transitarPara(StatusEvento destino) {
+		if (!status.podeIrPara(destino)) {
+			throw new ConflitoException(
+					"Não é possível alterar o status de %s para %s.".formatted(status, destino));
+		}
+		this.status = destino;
+	}
+
+	private static void validarDatas(Instant prazo, Instant inicio, Instant fim) {
+		if (prazo.isAfter(inicio)) {
+			throw new RegraNegocioException("O prazo para alterações precisa ser igual ou anterior à data de início.");
+		}
+		if (fim.isBefore(inicio)) {
+			throw new RegraNegocioException("A data de fim precisa ser igual ou posterior à data de início.");
+		}
 	}
 
 }
