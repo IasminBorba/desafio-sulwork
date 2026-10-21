@@ -13,6 +13,8 @@ import {
 import AcoesStatus, { type AcaoStatus } from '../components/AcoesStatus'
 import ErroApi from '../components/ErroApi'
 import EventoForm, { type EventoFormValores } from '../components/EventoForm'
+import SecaoItens from '../components/SecaoItens'
+import SecaoMetas from '../components/SecaoMetas'
 import StatusBadge from '../components/StatusBadge'
 import type { EventoDetalhe as Evento } from '../types/api'
 import { formatarData, instantParaLocal, localParaInstant } from '../utils/formatar'
@@ -137,6 +139,8 @@ export default function EventoDetalhe() {
           />
         </section>
       )}
+      <SecaoItens evento={evento} />
+      <SecaoMetas evento={evento} />
     </section>
   )
 }
