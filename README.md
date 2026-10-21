@@ -75,6 +75,16 @@ Na pasta `backend/`:
 
 O Surefire inclui as classes `*Test`, `*Tests` e `*IT`. O relatório do JaCoCo fica em `backend/target/site/jacoco/index.html` depois da execução.
 
+## Dados de demonstração
+
+A migration `V3` cria três contas com a senha `senha123`:
+
+| Nome | E-mail | Papel no exemplo |
+|---|---|---|
+| Ana Souza | ana.souza@sulwork.demo | organiza o churrasco aberto e um rascunho |
+| Bia Lima | bia.lima@sulwork.demo | participa do churrasco (celíaca) |
+| Carlos Dias | carlos.dias@sulwork.demo | organiza um almoço já encerrado (vegano) |
+
 ## Próximas seções
 
 Conforme o desenvolvimento avançar, este README vai incluir:
