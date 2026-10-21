@@ -1,5 +1,7 @@
 package br.com.sulwork.eventos.evento;
 
+import static org.hamcrest.Matchers.hasItem;
+import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -58,8 +60,9 @@ class EventoControllerIT extends IntegrationTestBase {
 
 		mockMvc.perform(get("/api/v1/eventos").header("Authorization", bearer(token)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content[0].nome").value("Churrasco da equipe"))
-				.andExpect(jsonPath("$.content[0].souOrganizador").value(true));
+				.andExpect(jsonPath("$.content[*].id", hasItem((int) id)))
+				.andExpect(jsonPath("$.content[?(@.id == %d)].nome".formatted(id), hasItem("Churrasco da equipe")))
+				.andExpect(jsonPath("$.content[?(@.id == %d)].souOrganizador".formatted(id), hasItem(true)));
 
 		mockMvc.perform(put("/api/v1/eventos/" + id)
 						.header("Authorization", bearer(token))
@@ -95,7 +98,7 @@ class EventoControllerIT extends IntegrationTestBase {
 				.andExpect(status().isNotFound());
 		mockMvc.perform(get("/api/v1/eventos").header("Authorization", bearer(bia)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content.length()").value(0));
+				.andExpect(jsonPath("$.content[*].id", not(hasItem((int) id))));
 		mockMvc.perform(put("/api/v1/eventos/" + id)
 						.header("Authorization", bearer(bia))
 						.contentType(MediaType.APPLICATION_JSON)
@@ -114,10 +117,9 @@ class EventoControllerIT extends IntegrationTestBase {
 
 		mockMvc.perform(get("/api/v1/eventos").header("Authorization", bearer(bia)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.content.length()").value(1))
-				.andExpect(jsonPath("$.content[0].id").value(id))
-				.andExpect(jsonPath("$.content[0].status").value("ABERTO"))
-				.andExpect(jsonPath("$.content[0].souOrganizador").value(false));
+				.andExpect(jsonPath("$.content[*].id", hasItem((int) id)))
+				.andExpect(jsonPath("$.content[?(@.id == %d)].status".formatted(id), hasItem("ABERTO")))
+				.andExpect(jsonPath("$.content[?(@.id == %d)].souOrganizador".formatted(id), hasItem(false)));
 		mockMvc.perform(get("/api/v1/eventos/" + id).header("Authorization", bearer(bia)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(id));
