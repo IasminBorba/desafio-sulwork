@@ -46,4 +46,10 @@ class CpfUtilsTest {
 		assertThat(CpfUtils.normalizar(null)).isNull();
 	}
 
+	@Test
+	void mascararEscondeOMeioDoCpf() {
+		assertThat(CpfUtils.mascarar("11144477735")).isEqualTo("111.***.***-35");
+		assertThat(CpfUtils.mascarar("111.444.777-35")).isEqualTo("111.***.***-35");
+	}
+
 }

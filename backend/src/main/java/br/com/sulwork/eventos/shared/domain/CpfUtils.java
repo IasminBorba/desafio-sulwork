@@ -28,6 +28,17 @@ public final class CpfUtils {
 		return semEspacos.replaceAll("\\D", "");
 	}
 
+	/**
+	 * Mascara o CPF para exibição ({@code 11144477735} vira {@code 111.***.***-35}).
+	 */
+	public static String mascarar(String cpf) {
+		String digitos = normalizar(cpf);
+		if (digitos == null) {
+			return null;
+		}
+		return digitos.substring(0, 3) + ".***.***-" + digitos.substring(9);
+	}
+
 	public static boolean isValido(String cpf) {
 		String digitos = normalizar(cpf);
 		if (digitos == null || todosDigitosIguais(digitos)) {
