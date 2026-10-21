@@ -65,10 +65,20 @@ Sem uma lista compartilhada, a combinação fica espalhada em mensagens, e o org
 | [Uso de IA](docs/USO-DE-IA.md) | Como a IA foi usada em cada etapa, sugestões aceitas e alteradas, e onde houve julgamento próprio |
 | [Diagrama ER](docs/diagrama.jpg) | Modelo de dados |
 
+## Testes do backend
+
+Na pasta `backend/`:
+
+```bash
+./mvnw test
+```
+
+O Surefire inclui as classes `*Test`, `*Tests` e `*IT`. O relatório do JaCoCo fica em `backend/target/site/jacoco/index.html` depois da execução.
+
 ## Próximas seções
 
 Conforme o desenvolvimento avançar, este README vai incluir:
-- instruções de execução (com e sem Docker) e de testes;
+- instruções de execução (com e sem Docker);
 - links da aplicação publicada e da documentação Swagger;
 - cálculo da cobertura com um exemplo numérico;
-- resultado da cobertura de testes.
+- percentual de cobertura de testes medido pelo JaCoCo.
