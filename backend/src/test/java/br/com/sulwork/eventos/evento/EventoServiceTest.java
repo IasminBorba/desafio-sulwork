@@ -44,6 +44,9 @@ class EventoServiceTest {
 	private ParticipacaoRepository participacaoRepository;
 
 	@Mock
+	private EventoAcesso eventoAcesso;
+
+	@Mock
 	private EncerramentoPorPrazoService encerramentoPorPrazoService;
 
 	@Mock
@@ -54,7 +57,7 @@ class EventoServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		eventoService = new EventoService(eventoRepository, itemRepository, participacaoRepository,
+		eventoService = new EventoService(eventoRepository, itemRepository, participacaoRepository, eventoAcesso,
 				encerramentoPorPrazoService, usuarioAutenticado, RELOGIO);
 	}
 
@@ -94,10 +97,8 @@ class EventoServiceTest {
 
 	@Test
 	void rascunhoDeOutraPessoaPareceInexistente() {
-		Evento evento = eventoDa(usuario(1L, "Ana"));
-		evento.setId(10L);
 		when(usuarioAutenticado.id()).thenReturn(2L);
-		when(eventoRepository.findComOrganizadorById(10L)).thenReturn(java.util.Optional.of(evento));
+		when(eventoAcesso.visivel(10L, 2L)).thenThrow(RecursoNaoEncontradoException.de("Evento", 10L));
 
 		assertThatThrownBy(() -> eventoService.buscar(10L))
 				.isInstanceOf(RecursoNaoEncontradoException.class);
@@ -106,11 +107,9 @@ class EventoServiceTest {
 
 	@Test
 	void naoOrganizadorNaoEditaEventoAberto() {
-		Evento evento = eventoDa(usuario(1L, "Ana"));
-		evento.setId(10L);
-		evento.publicar(RELOGIO, true);
 		when(usuarioAutenticado.id()).thenReturn(2L);
-		when(eventoRepository.findComOrganizadorById(10L)).thenReturn(java.util.Optional.of(evento));
+		when(eventoAcesso.comoOrganizador(10L, 2L))
+				.thenThrow(new PermissaoNegadaException("Apenas o organizador pode alterar o evento."));
 
 		assertThatThrownBy(() -> eventoService.atualizar(10L, pedidoValido()))
 				.isInstanceOf(PermissaoNegadaException.class);
@@ -121,7 +120,7 @@ class EventoServiceTest {
 		Evento evento = eventoDa(usuario(1L, "Ana"));
 		evento.setId(10L);
 		when(usuarioAutenticado.id()).thenReturn(1L);
-		when(eventoRepository.findComOrganizadorById(10L)).thenReturn(java.util.Optional.of(evento));
+		when(eventoAcesso.comoOrganizador(10L, 1L)).thenReturn(evento);
 		when(itemRepository.existsByEvento_Id(10L)).thenReturn(false);
 
 		assertThatThrownBy(() -> eventoService.publicar(10L))
@@ -135,7 +134,7 @@ class EventoServiceTest {
 		evento.setId(10L);
 		evento.publicar(RELOGIO, true);
 		when(usuarioAutenticado.id()).thenReturn(1L);
-		when(eventoRepository.findComOrganizadorById(10L)).thenReturn(java.util.Optional.of(evento));
+		when(eventoAcesso.comoOrganizador(10L, 1L)).thenReturn(evento);
 
 		assertThatThrownBy(() -> eventoService.excluir(10L))
 				.isInstanceOf(ConflitoException.class);

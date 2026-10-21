@@ -68,4 +68,16 @@ public class Item extends EntidadeAuditavel {
 		return item;
 	}
 
+	public void atualizar(Categoria categoria, String nome, int quantidadeNecessaria, boolean obrigatorio) {
+		this.categoria = categoria;
+		this.nome = nome;
+		this.quantidadeNecessaria = quantidadeNecessaria;
+		this.obrigatorio = obrigatorio;
+	}
+
+	public void substituirAlergenos(Set<Alergeno> novos) {
+		this.alergenos.clear();
+		this.alergenos.addAll(novos);
+	}
+
 }

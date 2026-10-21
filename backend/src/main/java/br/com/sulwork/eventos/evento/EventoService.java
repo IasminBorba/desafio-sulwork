@@ -11,8 +11,6 @@ import br.com.sulwork.eventos.evento.dto.EventoResumoResponse;
 import br.com.sulwork.eventos.evento.dto.ReabrirRequest;
 import br.com.sulwork.eventos.item.ItemRepository;
 import br.com.sulwork.eventos.participacao.ParticipacaoRepository;
-import br.com.sulwork.eventos.shared.exception.PermissaoNegadaException;
-import br.com.sulwork.eventos.shared.exception.RecursoNaoEncontradoException;
 import br.com.sulwork.eventos.usuario.Usuario;
 import br.com.sulwork.eventos.usuario.UsuarioAutenticado;
 
@@ -22,16 +20,19 @@ public class EventoService {
 	private final EventoRepository eventoRepository;
 	private final ItemRepository itemRepository;
 	private final ParticipacaoRepository participacaoRepository;
+	private final EventoAcesso eventoAcesso;
 	private final EncerramentoPorPrazoService encerramentoPorPrazoService;
 	private final UsuarioAutenticado usuarioAutenticado;
 	private final java.time.Clock clock;
 
 	public EventoService(EventoRepository eventoRepository, ItemRepository itemRepository,
-			ParticipacaoRepository participacaoRepository, EncerramentoPorPrazoService encerramentoPorPrazoService,
-			UsuarioAutenticado usuarioAutenticado, java.time.Clock clock) {
+			ParticipacaoRepository participacaoRepository, EventoAcesso eventoAcesso,
+			EncerramentoPorPrazoService encerramentoPorPrazoService, UsuarioAutenticado usuarioAutenticado,
+			java.time.Clock clock) {
 		this.eventoRepository = eventoRepository;
 		this.itemRepository = itemRepository;
 		this.participacaoRepository = participacaoRepository;
+		this.eventoAcesso = eventoAcesso;
 		this.encerramentoPorPrazoService = encerramentoPorPrazoService;
 		this.usuarioAutenticado = usuarioAutenticado;
 		this.clock = clock;
@@ -130,20 +131,11 @@ public class EventoService {
 	}
 
 	private Evento carregarVisivel(Long id, Long usuarioId) {
-		Evento evento = eventoRepository.findComOrganizadorById(id)
-				.orElseThrow(() -> RecursoNaoEncontradoException.de("Evento", id));
-		if (evento.getStatus() == StatusEvento.RASCUNHO && !evento.ehOrganizadoPor(usuarioId)) {
-			throw RecursoNaoEncontradoException.de("Evento", id);
-		}
-		return evento;
+		return eventoAcesso.visivel(id, usuarioId);
 	}
 
 	private Evento carregarComoOrganizador(Long id, Long usuarioId) {
-		Evento evento = carregarVisivel(id, usuarioId);
-		if (!evento.ehOrganizadoPor(usuarioId)) {
-			throw new PermissaoNegadaException("Apenas o organizador pode alterar o evento.");
-		}
-		return evento;
+		return eventoAcesso.comoOrganizador(id, usuarioId);
 	}
 
 	private EventoDetalheResponse detalhe(Evento evento, Long usuarioId) {
