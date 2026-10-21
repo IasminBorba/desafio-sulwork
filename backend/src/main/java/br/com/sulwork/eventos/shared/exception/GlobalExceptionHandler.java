@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -27,9 +28,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		return problema(HttpStatus.NOT_FOUND, "Recurso não encontrado", ex.getMessage());
 	}
 
+	@ExceptionHandler(NaoAutenticadoException.class)
+	ProblemDetail handleNaoAutenticado(NaoAutenticadoException ex) {
+		return problema(HttpStatus.UNAUTHORIZED, "Não autenticado", ex.getMessage());
+	}
+
 	@ExceptionHandler(PermissaoNegadaException.class)
 	ProblemDetail handlePermissaoNegada(PermissaoNegadaException ex) {
 		return problema(HttpStatus.FORBIDDEN, "Permissão negada", ex.getMessage());
+	}
+
+	@ExceptionHandler(DataIntegrityViolationException.class)
+	ProblemDetail handleIntegridade(DataIntegrityViolationException ex) {
+		log.warn("Violação de integridade", ex);
+		return problema(HttpStatus.CONFLICT, "Conflito", "Os dados informados conflitam com um registro existente.");
 	}
 
 	@ExceptionHandler(ConflitoException.class)

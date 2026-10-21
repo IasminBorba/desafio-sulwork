@@ -64,4 +64,10 @@ public class Usuario extends EntidadeAuditavel {
 		return usuario;
 	}
 
+	public void atualizarPerfil(String nome, Set<RestricaoAlimentar> novasRestricoes) {
+		this.nome = nome;
+		this.restricoes.clear();
+		this.restricoes.addAll(novasRestricoes);
+	}
+
 }

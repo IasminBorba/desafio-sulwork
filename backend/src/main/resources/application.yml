@@ -44,3 +44,6 @@ app:
   timezone: America/Recife
   cors:
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:5173}
+  jwt:
+    secret: ${JWT_SECRET:dev-secret-com-pelo-menos-trinta-e-dois-chars!!}
+    expiration: ${JWT_EXPIRATION:8h}
