@@ -1,0 +1,84 @@
+:root {
+  --ink: #1c1914;
+  --muted: #6b6258;
+  --paper: #f6f0e6;
+  --paper-2: #fffaf2;
+  --line: #e4d9c8;
+  --leaf: #2f6b4f;
+  --leaf-dark: #1e4634;
+  --clay: #c45c26;
+  --gold: #d6a24a;
+  --danger: #9b2c2c;
+  --ok: #2f6b4f;
+  --shadow: 0 18px 40px -28px rgba(30, 70, 52, 0.45);
+  --sans: 'Outfit', system-ui, sans-serif;
+  --serif: 'Fraunces', Georgia, serif;
+  --radius: 18px;
+  font: 16px/1.5 var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top left, rgba(212, 162, 74, 0.16), transparent 28%),
+    radial-gradient(circle at 90% 10%, rgba(47, 107, 79, 0.12), transparent 24%),
+    var(--paper);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin: 0 0 0.4em;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--leaf-dark);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+#root {
+  min-height: 100svh;
+}
+
+.shell {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 4rem 1.5rem;
+}
+
+.eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: 0.75rem;
+  color: var(--clay);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
