@@ -1,4 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { AuthProvider } from './auth/AuthContext'
+import ProtectedRoute from './auth/ProtectedRoute'
 import Layout from './components/Layout'
 import Cadastro from './pages/Cadastro'
 import EventoDetalhe from './pages/EventoDetalhe'
@@ -10,19 +12,23 @@ import Perfil from './pages/Perfil'
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Eventos />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/cadastro" element={<Cadastro />} />
-          <Route path="/perfil" element={<Perfil />} />
-          <Route path="/eventos/novo" element={<EventoNovo />} />
-          <Route path="/eventos/:id" element={<EventoDetalhe />} />
-          <Route path="/eventos/:id/painel" element={<PainelEvento />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/cadastro" element={<Cadastro />} />
+            <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<Eventos />} />
+              <Route path="/perfil" element={<Perfil />} />
+              <Route path="/eventos/novo" element={<EventoNovo />} />
+              <Route path="/eventos/:id" element={<EventoDetalhe />} />
+              <Route path="/eventos/:id/painel" element={<PainelEvento />} />
+            </Route>
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
   )
 }

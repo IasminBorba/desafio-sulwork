@@ -109,7 +109,8 @@ button, input, select, textarea { font: inherit; }
   flex-wrap: wrap;
 }
 
-.nav a, .nav button.linkish {
+.nav a,
+.nav button.linkish {
   text-decoration: none;
   color: var(--ink);
   padding: 0.4rem 0.8rem;
